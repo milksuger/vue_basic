@@ -6,6 +6,12 @@
     <title>Document</title>
     <!-- 引入vue -->
     <!-- 全局多了一个Vue -->
+    <!-- 
+      总结
+      1.想让Vue工作，就必须创建一个Vue实例，且要传入一个配置对象(el,data等)
+      2.root容器里的代码依然符合html规范，只是混入了一些特殊的Vue语法
+      3.root容器里的代码被称为【Vue】模板
+     -->
     <script src="../js/vue.js"></script>
   </head>
   <body>
@@ -17,10 +23,11 @@
       Vue.config.productionTip = false;
 
       // Vue的构造函数传入一个配置对象
-      var app = new Vue({
+      new Vue({
         // el用于指定当前Vue示例为哪个容器服务，值为CSS选择器字符串，通常为#app
         // el: document.getElementById("root"),  // 可以这么写
         el: "#root",
+        // data中用于存储数据，数据供el指定的容器使用，我们暂时先写成一个对象，后期写成函数返回值
         data: {
           message: "Hello Vue!11",
           name: "小婉儿",
