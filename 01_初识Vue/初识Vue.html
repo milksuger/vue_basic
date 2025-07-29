@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <!-- 引入vue -->
+    <!-- 全局多了一个Vue -->
+    <script src="../js/vue.js"></script>
+  </head>
+  <body>
+    <!-- 把容器里的变化的数据交给Vue实例管理 -->
+    <div id="root">{{ message }} - {{ name }}</div>
+
+    <script>
+      // 关闭生产环境提示
+      Vue.config.productionTip = false;
+
+      // Vue的构造函数传入一个配置对象
+      var app = new Vue({
+        // el用于指定当前Vue示例为哪个容器服务，值为CSS选择器字符串，通常为#app
+        // el: document.getElementById("root"),  // 可以这么写
+        el: "#root",
+        data: {
+          message: "Hello Vue!11",
+          name: "小婉儿",
+        },
+      });
+      // console.log(app);
+    </script>
+  </body>
+</html>
