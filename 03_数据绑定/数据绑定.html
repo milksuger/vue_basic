@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../js/vue.js"></script>
+  </head>
+  <body>
+    <div id="root">
+      <h1>数据绑定</h1>
+      <span>单向数据绑定</span>
+      <input type="text" :value="school.name" />
+      <br />
+      <span>双向数据绑定</span>
+      <input type="text" v-model="school.name" />
+    </div>
+    <script>
+      Vue.config.productionTip = false;
+      new Vue({
+        el: "#root",
+        data: {
+          school: {
+            name: "尚硅谷",
+          },
+        },
+      });
+    </script>
+  </body>
+</html>

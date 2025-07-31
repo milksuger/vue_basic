@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../js/vue.js"></script>
+  </head>
+  <body>
+    <div id="root">{{name}}</div>
+    <script>
+      Vue.config.productionTip = false;
+      // el的两种写法
+      // 除了使用el属性指定挂载的容器，还可以使用$mount方法挂载，后者更灵活
+      //   new Vue({
+      //     // el: "#root",
+      //     data: {
+      //       name: "王华凯",
+      //     },
+      //   }).$mount("#root");
+
+      // data的两种写法
+      //   new Vue({
+      //     el: "#root",
+      //     // 第一种写法，对象
+      //     data: {
+      //       name: "王华凯",
+      //     },
+      //   });
+
+      //   new Vue({
+      //     el: "#root",
+      //     // 第二种写法，函数
+      //     // 箭头函数
+      //     data: () => {
+      //       return {
+      //         name: "王华凯",
+      //       };
+      //     },
+      //   });
+      new Vue({
+        el: "#root",
+        // 第二种写法，函数
+        // 这个函数必须返回对象
+        data: function () {
+          return {
+            name: "王华凯",
+          };
+        },
+      });
+      //   以后学习到组件之后，必须使用函数式写法
+    </script>
+  </body>
+</html>

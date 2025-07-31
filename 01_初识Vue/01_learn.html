@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../js/vue.js"></script>
+    <!-- 
+        插值和指令使用的位置：
+        1.插值语法：用于标签体（即标签开始和结束之间的部分），可以直接读取到data中的数据
+        2.指令语法：用于解析标签包括标签属性值和标签内部内容和绑定事件，也可以读取到data中的数据
+    -->
+  </head>
+  <body>
+    <!-- 定义容器 -->
+    <div id="root">
+      <h2>插值语法</h2>
+      <p>你好,{{name}}</p>
+      <hr />
+      <h2>指令语法</h2>
+      <!-- href前面加了v-bind,对应的learn1就会被当成js表达式执行 -->
+      <a v-bind:href="learn1.toUpperCase()">点我去{{school.name}}学习1</a>
+      <h3>学校地址：{{school.address}}</h3>
+      <a :href="learn1">点我去尚硅谷学习2</a>
+    </div>
+    <script>
+      Vue.config.productionTip = false;
+      new Vue({
+        el: "#root",
+        data: {
+          name: "Jack",
+          learn1: "http://www.atguigu.com",
+          // 可以写嵌套对象
+          school: {
+            name: "尚硅谷",
+            address: "北京",
+          },
+        },
+      });
+    </script>
+  </body>
+</html>
