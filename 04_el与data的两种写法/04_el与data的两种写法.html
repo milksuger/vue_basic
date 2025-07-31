@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <script src="../js/vue.js"></script>
+    <!-- 由Vue管理的函数，一定不要写箭头函数，一旦写了箭头函数，this就不再是Vue实例了 -->
   </head>
   <body>
     <div id="root">{{name}}</div>
@@ -31,7 +32,7 @@
       //   new Vue({
       //     el: "#root",
       //     // 第二种写法，函数
-      //     // 箭头函数
+      //     // 箭头函数 箭头函数没有自己的this,向外找，是window
       //     data: () => {
       //       return {
       //         name: "王华凯",
@@ -48,7 +49,7 @@
           };
         },
       });
-      //   以后学习到组件之后，必须使用函数式写法
+      //   以后学习到组件之后，必须使用函数式写法,但是以后不建议把data写成箭头函数
     </script>
   </body>
 </html>
