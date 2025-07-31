@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <script src="../js/vue.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      Vue.config.productionTip = false;
+      const vm = new Vue({
+        el: "#root",
+        data: function () {
+          return {
+            // 这里涉及到代理一说，在浏览器控制台打印Vue实例可以看到data里的数据，但是需要点一下才能看到数据。
+
+            name: "张三",
+            age: 18,
+          };
+        },
+      });
+      console.log(vm);
+    </script>
+  </body>
+</html>
