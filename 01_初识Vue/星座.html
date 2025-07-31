@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>星座运势 - 探索你的命运</title>
+
+    <!-- 容器 -->
+    <canvas id="canvas" style="position: fixed; inset: 0; z-index: -1"></canvas>
+
+    <!-- 国内 Gitee 镜像脚本 -->
+    <script src="https://gitee.com/wyanhui02/html_css_demo/raw/master/code/162/particle.min.js"></script>
+    <script>
+      // 一行初始化，颜色、数量、排斥强度均可调
+      Particle.init({
+        selector: "#canvas",
+        color: ["#00c6ff", "#0072ff"],
+        maxParticles: 90,
+        connectDistance: 120,
+        repulseForce: 0.8, // 鼠标靠近推开力度
+      });
+    </script>
+
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Noto Sans SC", sans-serif;
+        background: linear-gradient(
+          135deg,
+          #1a0033 0%,
+          #4a148c 50%,
+          #6a1b9a 100%
+        );
+        color: #ffffff;
+        min-height: 100vh;
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      /* 星空背景 */
+      .stars {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .star {
+        position: absolute;
+        background-color: #ffffff;
+        border-radius: 50%;
+        animation: twinkle 3s infinite;
+      }
+
+      @keyframes twinkle {
+        0% {
+          opacity: 0.2;
+        }
+        50% {
+          opacity: 1;
+        }
+        100% {
+          opacity: 0.2;
+        }
+      }
+
+      /* 主容器 */
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+        position: relative;
+        z-index: 1;
+      }
+
+      /* 头部 */
+      header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 20px 0;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        margin-bottom: 10px;
+        background: linear-gradient(90deg, #e1bee7, #ce93d8, #ba68c8);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0 0 15px rgba(186, 104, 200, 0.5);
+      }
+
+      .subtitle {
+        font-size: 1.2rem;
+        color: #e1bee7;
+        font-weight: 300;
+      }
+
+      /* 星座选择区域 */
+      .zodiac-selection {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+      }
+
+      .zodiac-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        gap: 15px;
+        margin-top: 20px;
+      }
+
+      .zodiac-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 15px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 15px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .zodiac-item:hover {
+        background: rgba(255, 255, 255, 0.15);
+        transform: translateY(-5px);
+      }
+
+      .zodiac-item.active {
+        background: rgba(186, 104, 200, 0.3);
+        border: 2px solid #ba68c8;
+      }
+
+      .zodiac-icon {
+        font-size: 2rem;
+        margin-bottom: 8px;
+      }
+
+      .zodiac-name {
+        font-size: 0.9rem;
+      }
+
+      /* 运势查询区域 */
+      .fortune-query {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+      }
+
+      .query-options {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 20px;
+        flex-wrap: wrap;
+      }
+
+      .query-btn {
+        padding: 10px 20px;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 30px;
+        color: #ffffff;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+      }
+
+      .query-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      .query-btn.active {
+        background: #ba68c8;
+        border-color: #ba68c8;
+      }
+
+      /* 运势展示区域 */
+      .fortune-display {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 30px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        display: none;
+      }
+
+      .fortune-display.active {
+        display: block;
+        animation: fadeIn 0.5s ease;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .fortune-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 25px;
+      }
+
+      .fortune-icon {
+        font-size: 3rem;
+        margin-right: 15px;
+        color: #e1bee7;
+      }
+
+      .fortune-title {
+        font-size: 1.8rem;
+        font-weight: 500;
+      }
+
+      .fortune-date {
+        margin-left: auto;
+        color: #e1bee7;
+        font-size: 1rem;
+      }
+
+      .fortune-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 25px;
+      }
+
+      .fortune-card {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 15px;
+        padding: 20px;
+        transition: all 0.3s ease;
+      }
+
+      .fortune-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      }
+
+      .fortune-card-title {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+        font-weight: 500;
+      }
+
+      .fortune-card-icon {
+        margin-right: 10px;
+        color: #e1bee7;
+      }
+
+      .fortune-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #ba68c8;
+      }
+
+      .fortune-description {
+        margin-top: 15px;
+        line-height: 1.6;
+        color: #e1bee7;
+      }
+
+      /* 互动功能区域 */
+      .interaction {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        text-align: center;
+        display: none;
+      }
+
+      .interaction.active {
+        display: block;
+        animation: fadeIn 0.5s ease;
+      }
+
+      .share-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 20px;
+      }
+
+      .share-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        color: #ffffff;
+        transition: all 0.3s ease;
+      }
+
+      .share-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-5px);
+      }
+
+      .share-btn i {
+        font-size: 1.5rem;
+      }
+
+      /* 页脚 */
+      footer {
+        text-align: center;
+        margin-top: 50px;
+        padding: 20px 0;
+        color: #e1bee7;
+        font-size: 0.9rem;
+      }
+
+      /* 响应式设计 */
+      @media (max-width: 768px) {
+        h1 {
+          font-size: 2rem;
+        }
+
+        .zodiac-grid {
+          grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+        }
+
+        .fortune-content {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- 星空背景 -->
+    <div class="stars" id="stars"></div>
+
+    <!-- 主容器 -->
+    <div class="container">
+      <!-- 头部 -->
+      <header>
+        <h1>星座运势</h1>
+        <p class="subtitle">探索你的命运，预见未来</p>
+      </header>
+
+      <!-- 星座选择区域 -->
+      <section class="zodiac-selection">
+        <h2>选择你的星座</h2>
+        <div class="zodiac-grid">
+          <div class="zodiac-item" data-sign="aries">
+            <div class="zodiac-icon">♈</div>
+            <div class="zodiac-name">白羊座</div>
+          </div>
+          <div class="zodiac-item" data-sign="taurus">
+            <div class="zodiac-icon">♉</div>
+            <div class="zodiac-name">金牛座</div>
+          </div>
+          <div class="zodiac-item" data-sign="gemini">
+            <div class="zodiac-icon">♊</div>
+            <div class="zodiac-name">双子座</div>
+          </div>
+          <div class="zodiac-item" data-sign="cancer">
+            <div class="zodiac-icon">♋</div>
+            <div class="zodiac-name">巨蟹座</div>
+          </div>
+          <div class="zodiac-item" data-sign="leo">
+            <div class="zodiac-icon">♌</div>
+            <div class="zodiac-name">狮子座</div>
+          </div>
+          <div class="zodiac-item" data-sign="virgo">
+            <div class="zodiac-icon">♍</div>
+            <div class="zodiac-name">处女座</div>
+          </div>
+          <div class="zodiac-item" data-sign="libra">
+            <div class="zodiac-icon">♎</div>
+            <div class="zodiac-name">天秤座</div>
+          </div>
+          <div class="zodiac-item" data-sign="scorpio">
+            <div class="zodiac-icon">♏</div>
+            <div class="zodiac-name">天蝎座</div>
+          </div>
+          <div class="zodiac-item" data-sign="sagittarius">
+            <div class="zodiac-icon">♐</div>
+            <div class="zodiac-name">射手座</div>
+          </div>
+          <div class="zodiac-item" data-sign="capricorn">
+            <div class="zodiac-icon">♑</div>
+            <div class="zodiac-name">摩羯座</div>
+          </div>
+          <div class="zodiac-item" data-sign="aquarius">
+            <div class="zodiac-icon">♒</div>
+            <div class="zodiac-name">水瓶座</div>
+          </div>
+          <div class="zodiac-item" data-sign="pisces">
+            <div class="zodiac-icon">♓</div>
+            <div class="zodiac-name">双鱼座</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 运势查询区域 -->
+      <section class="fortune-query">
+        <h2>选择运势类型</h2>
+        <div class="query-options">
+          <button class="query-btn active" data-type="today">今日运势</button>
+          <button class="query-btn" data-type="week">本周运势</button>
+          <button class="query-btn" data-type="month">本月运势</button>
+          <button class="query-btn" data-type="year">今年运势</button>
+        </div>
+      </section>
+
+      <!-- 运势展示区域 -->
+      <section class="fortune-display" id="fortuneDisplay">
+        <div class="fortune-header">
+          <div class="fortune-icon" id="fortuneIcon">♈</div>
+          <div>
+            <div class="fortune-title" id="fortuneTitle">白羊座 今日运势</div>
+            <div class="fortune-date" id="fortuneDate">2025年07月30日</div>
+          </div>
+        </div>
+
+        <div class="fortune-content">
+          <div class="fortune-card">
+            <div class="fortune-card-title">
+              <i class="material-icons fortune-card-icon">star</i>
+              综合指数
+            </div>
+            <div class="fortune-value" id="overallIndex">85%</div>
+          </div>
+
+          <div class="fortune-card">
+            <div class="fortune-card-title">
+              <i class="material-icons fortune-card-icon">favorite</i>
+              爱情指数
+            </div>
+            <div class="fortune-value" id="loveIndex">78%</div>
+          </div>
+
+          <div class="fortune-card">
+            <div class="fortune-card-title">
+              <i class="material-icons fortune-card-icon">work</i>
+              工作指数
+            </div>
+            <div class="fortune-value" id="workIndex">92%</div>
+          </div>
+
+          <div class="fortune-card">
+            <div class="fortune-card-title">
+              <i class="material-icons fortune-card-icon">attach_money</i>
+              财运指数
+            </div>
+            <div class="fortune-value" id="moneyIndex">65%</div>
+          </div>
+
+          <div class="fortune-card">
+            <div class="fortune-card-title">
+              <i class="material-icons fortune-card-icon">favorite_border</i>
+              健康指数
+            </div>
+            <div class="fortune-value" id="healthIndex">88%</div>
+          </div>
+
+          <div class="fortune-card">
+            <div class="fortune-card-title">
+              <i class="material-icons fortune-card-icon">palette</i>
+              幸运颜色
+            </div>
+            <div class="fortune-value" id="luckyColor">紫色</div>
+          </div>
+
+          <div class="fortune-card">
+            <div class="fortune-card-title">
+              <i class="material-icons fortune-card-icon">filter_7</i>
+              幸运数字
+            </div>
+            <div class="fortune-value" id="luckyNumber">7</div>
+          </div>
+
+          <div class="fortune-card">
+            <div class="fortune-card-title">
+              <i class="material-icons fortune-card-icon">person</i>
+              贵人星座
+            </div>
+            <div class="fortune-value" id="helpfulSign">处女座</div>
+          </div>
+        </div>
+
+        <div class="fortune-description" id="fortuneDescription">
+          今天是你展现领导力的好日子。在工作中，你的创意和决策能力将得到上司的认可。感情方面，单身的你可能会遇到心仪的对象，已有伴侣的人则与另一半关系更加亲密。财运方面有小幅提升，但不宜进行大额投资。健康方面需要注意保持良好的作息习惯。
+        </div>
+      </section>
+
+      <!-- 互动功能区域 -->
+      <section class="interaction" id="interaction">
+        <h2>分享你的运势</h2>
+        <p>将你的星座运势分享给朋友，一起探索命运的奥秘</p>
+        <div class="share-buttons">
+          <div class="share-btn">
+            <i class="material-icons">chat</i>
+          </div>
+          <div class="share-btn">
+            <i class="material-icons">alternate_email</i>
+          </div>
+          <div class="share-btn">
+            <i class="material-icons">share</i>
+          </div>
+          <div class="share-btn">
+            <i class="material-icons">bookmark</i>
+          </div>
+        </div>
+      </section>
+
+      <!-- 页脚 -->
+      <footer>
+        <p>&copy; 2025 星座运势 | 探索你的命运</p>
+      </footer>
+    </div>
+
+    <script>
+      // 生成星空背景
+      function createStars() {
+        const starsContainer = document.getElementById("stars");
+        const numberOfStars = 100;
+
+        for (let i = 0; i < numberOfStars; i++) {
+          const star = document.createElement("div");
+          star.classList.add("star");
+
+          // 随机大小
+          const size = Math.random() * 3 + 1;
+          star.style.width = `${size}px`;
+          star.style.height = `${size}px`;
+
+          // 随机位置
+          star.style.left = `${Math.random() * 100}%`;
+          star.style.top = `${Math.random() * 100}%`;
+
+          // 随机动画延迟
+          star.style.animationDelay = `${Math.random() * 3}s`;
+
+          starsContainer.appendChild(star);
+        }
+      }
+
+      // 初始化星空背景
+      createStars();
+
+      // 星座选择
+      const zodiacItems = document.querySelectorAll(".zodiac-item");
+      let selectedZodiac = null;
+
+      zodiacItems.forEach((item) => {
+        item.addEventListener("click", function () {
+          // 移除所有active类
+          zodiacItems.forEach((z) => z.classList.remove("active"));
+
+          // 添加active类到当前项
+          this.classList.add("active");
+
+          // 保存选中的星座
+          selectedZodiac = {
+            sign: this.dataset.sign,
+            icon: this.querySelector(".zodiac-icon").textContent,
+            name: this.querySelector(".zodiac-name").textContent,
+          };
+
+          // 更新运势显示
+          updateFortuneDisplay();
+        });
+      });
+
+      // 运势类型选择
+      const queryButtons = document.querySelectorAll(".query-btn");
+      let selectedType = "today";
+
+      queryButtons.forEach((button) => {
+        button.addEventListener("click", function () {
+          // 移除所有active类
+          queryButtons.forEach((b) => b.classList.remove("active"));
+
+          // 添加active类到当前按钮
+          this.classList.add("active");
+
+          // 保存选中的类型
+          selectedType = this.dataset.type;
+
+          // 更新运势显示
+          updateFortuneDisplay();
+        });
+      });
+
+      // 更新运势显示
+      function updateFortuneDisplay() {
+        if (!selectedZodiac) return;
+
+        const fortuneDisplay = document.getElementById("fortuneDisplay");
+        const interaction = document.getElementById("interaction");
+
+        // 显示运势区域和互动区域
+        fortuneDisplay.classList.add("active");
+        interaction.classList.add("active");
+
+        // 更新标题
+        const typeText = {
+          today: "今日运势",
+          week: "本周运势",
+          month: "本月运势",
+          year: "今年运势",
+        };
+
+        document.getElementById("fortuneIcon").textContent =
+          selectedZodiac.icon;
+        document.getElementById(
+          "fortuneTitle"
+        ).textContent = `${selectedZodiac.name}${typeText[selectedType]}`;
+
+        // 更新日期
+        const today = new Date();
+        const dateText = `${today.getFullYear()}年${
+          today.getMonth() + 1
+        }月${today.getDate()}日`;
+        document.getElementById("fortuneDate").textContent = dateText;
+
+        // 模拟运势数据
+        const fortuneData = generateFortuneData(
+          selectedZodiac.sign,
+          selectedType
+        );
+
+        // 更新运势数据
+        document.getElementById("overallIndex").textContent =
+          fortuneData.overall;
+        document.getElementById("loveIndex").textContent = fortuneData.love;
+        document.getElementById("workIndex").textContent = fortuneData.work;
+        document.getElementById("moneyIndex").textContent = fortuneData.money;
+        document.getElementById("healthIndex").textContent = fortuneData.health;
+        document.getElementById("luckyColor").textContent = fortuneData.color;
+        document.getElementById("luckyNumber").textContent = fortuneData.number;
+        document.getElementById("helpfulSign").textContent =
+          fortuneData.helpfulSign;
+        document.getElementById("fortuneDescription").textContent =
+          fortuneData.description;
+      }
+
+      // 生成模拟运势数据
+      function generateFortuneData(zodiac, type) {
+        // 基于星座和类型生成不同的运势数据
+        const baseValues = {
+          aries: { overall: 85, love: 78, work: 92, money: 65, health: 88 },
+          taurus: { overall: 78, love: 85, work: 75, money: 90, health: 82 },
+          gemini: { overall: 80, love: 70, work: 85, money: 75, health: 85 },
+          cancer: { overall: 75, love: 90, work: 70, money: 80, health: 75 },
+          leo: { overall: 90, love: 85, work: 80, money: 70, health: 90 },
+          virgo: { overall: 82, love: 75, work: 90, money: 85, health: 80 },
+          libra: { overall: 78, love: 95, work: 75, money: 70, health: 85 },
+          scorpio: { overall: 88, love: 80, work: 85, money: 80, health: 82 },
+          sagittarius: {
+            overall: 85,
+            love: 75,
+            work: 80,
+            money: 75,
+            health: 90,
+          },
+          capricorn: { overall: 80, love: 70, work: 95, money: 90, health: 75 },
+          aquarius: { overall: 75, love: 80, work: 75, money: 85, health: 80 },
+          pisces: { overall: 82, love: 90, work: 70, money: 80, health: 85 },
+        };
+
+        const values = baseValues[zodiac];
+
+        // 根据类型调整值
+        const typeMultiplier = {
+          today: 1,
+          week: 0.95,
+          month: 0.9,
+          year: 0.85,
+        };
+
+        const multiplier = typeMultiplier[type];
+
+        // 生成描述文本
+        const descriptions = {
+          today:
+            "今天是你展现领导力的好日子。在工作中，你的创意和决策能力将得到上司的认可。感情方面，单身的你可能会遇到心仪的对象，已有伴侣的人则与另一半关系更加亲密。财运方面有小幅提升，但不宜进行大额投资。健康方面需要注意保持良好的作息习惯。",
+          week: "本周整体运势平稳上升，特别是在人际关系方面会有不错的收获。工作上可能会有新的项目机会，需要你主动争取。感情方面，单身者有机会结识新朋友，已有伴侣的人则需要多花时间陪伴对方。财运方面有小幅波动，建议谨慎理财。",
+          month:
+            "本月是你的幸运月，各方面运势都有不错的表现。工作上可能会有晋升机会，但需要你付出更多努力。感情方面，单身者有机会遇到心仪的对象，已有伴侣的人关系更加稳定。财运方面有较大提升，可以考虑一些稳健的投资计划。",
+          year: "今年是你事业发展的关键一年，特别是下半年会有不错的机会。感情方面，单身者可能会遇到适合的伴侣，已有伴侣的人感情更加深厚。财运方面整体稳定，但需要注意避免冲动消费。健康方面需要多关注心理健康，保持积极乐观的心态。",
+        };
+
+        return {
+          overall: `${Math.round(values.overall * multiplier)}%`,
+          love: `${Math.round(values.love * multiplier)}%`,
+          work: `${Math.round(values.work * multiplier)}%`,
+          money: `${Math.round(values.money * multiplier)}%`,
+          health: `${Math.round(values.health * multiplier)}%`,
+          color: ["紫色", "蓝色", "绿色", "红色", "黄色", "橙色"][
+            Math.floor(Math.random() * 6)
+          ],
+          number: Math.floor(Math.random() * 9) + 1,
+          helpfulSign: [
+            "白羊座",
+            "金牛座",
+            "双子座",
+            "巨蟹座",
+            "狮子座",
+            "处女座",
+            "天秤座",
+            "天蝎座",
+            "射手座",
+            "摩羯座",
+            "水瓶座",
+            "双鱼座",
+          ][Math.floor(Math.random() * 12)],
+          description: descriptions[type],
+        };
+      }
+
+      // 分享按钮功能
+      const shareButtons = document.querySelectorAll(".share-btn");
+
+      shareButtons.forEach((button) => {
+        button.addEventListener("click", function () {
+          if (!selectedZodiac) return;
+
+          // 模拟分享功能
+          const icon = this.querySelector(".material-icons").textContent;
+
+          if (icon === "chat") {
+            alert("分享到微信");
+          } else if (icon === "alternate_email") {
+            alert("分享到邮件");
+          } else if (icon === "share") {
+            alert("分享到社交媒体");
+          } else if (icon === "bookmark") {
+            alert("收藏运势");
+          }
+        });
+      });
+    </script>
+  </body>
+</html>
