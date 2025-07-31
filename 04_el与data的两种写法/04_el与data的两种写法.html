@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Document</title>
     <script src="../js/vue.js"></script>
-    <!-- 由Vue管理的函数，一定不要写箭头函数，一旦写了箭头函数，this就不再是Vue实例了 -->
+    <!-- 由Vue管理的函数，一定不要写箭头函数，一旦写了箭头函数，this就不再是Vue实例了,Vue实例中的data写成函数就是Vu所
+     管理的函数，所以一定写成普通函数而不是箭头函数 -->
   </head>
   <body>
     <div id="root">{{name}}</div>
